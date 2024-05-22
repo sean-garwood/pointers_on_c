@@ -3,10 +3,6 @@
 
 int value();
 
-static int a = 10, b = -25;
-static int c = 0, d = 3;
-static int e = 20;
-
 int main(void)
 {
     printf("%d\n", value());
@@ -15,7 +11,10 @@ int main(void)
 
 int value()
 {
+    int a = 10, b = -25;
+    int c = 0, d = 3;
+    int e = 20;
     int expression;
-    expression = (a | b << a & b);
+    expression = a <<= d > 20 ? b && c++ : d--;
     return expression;
 }
