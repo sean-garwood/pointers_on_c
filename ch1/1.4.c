@@ -30,3 +30,6 @@ void scan_input_file(FILE *file, char *longest_line)
         }
     }
 }
+
+/* problems 1.5 and 1.6 were omitted from the repository due to the fact that
+they require copying by rote a large program*/
