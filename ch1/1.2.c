@@ -1,25 +1,24 @@
-/*Procedure:
-1. read lines from the standard input
-2. print line number and line to the standard output.
-
-There is no limit to the length of the line.
-*/
+/* Take user input from stdin one line at a time
+initializes a line number counter at 1. first line received is line 1
+send the concatenated line number, space, and user input to stdout*/
 
 #include "1.h"
 
+void add_line_number(char *line, int line_number);
+
 int main()
 {
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-    int line_number = 0;
-
-    while ((read = getline(&line, &len, stdin)) != -1 && line[0] != '\n')
+    int line_number = 1;
+    char line[100];
+    while (fgets(line, sizeof(line), stdin)[0] != '\n')
     {
+        add_line_number(line, line_number);
         line_number++;
-        printf("%d %s", line_number, line);
     }
-
-    free(line);
     return 0;
+}
+
+void add_line_number(char *line, int line_number)
+{
+    printf("%d %s\n", line_number, line);
 }
