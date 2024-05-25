@@ -4,7 +4,7 @@
 
 #define NARGS 5
 
-int checkargs(int argc, char *argv[], int debug);
+int checkargs(int argc);
 void info();
 int get_mask(int i, int j);
 int mask_value(int i, int j, int v_0);
@@ -14,9 +14,19 @@ void result(int i, int j, int v_0, int v_t, int v_m);
 
 int get_mask(int i, int j)
 {
-    int mask = 0;
-    for (int k = i; k <= j; k++)
-        mask |= 1 << k;
+    short mask = 0;
+
+    /* set the bits from starting_bit to ending_bit to 1
+    keep the rest zero
+
+    keep in mind that starting_bit is the most significant bit
+    Assume bits in int are numbered from right to left, and that starting bit
+    position cannot be less than ending bit position.*/
+
+    for (int i = ending_bit; i <= starting_bit; i++)
+    {
+        mask |= 1 << i;
+    }
     return mask;
 }
 
@@ -35,39 +45,9 @@ int or_v0(int v_0, int *v)
     return (*v | v_0);
 }
 
-int checkargs(int argc, char *argv[], int debug)
+int checkargs(int argc)
 {
-    if (debug)
-    {
-        printf("============-DEBUG MODE-============\n");
-
-        argv[1] = "15";
-        argv[2] = "0";
-        argv[3] = "0";
-        argv[4] = "3";
-
-        printf("argv[1]: v_0 set to %s\n", argv[1]);
-        printf("argv[2]: v_t set to %s\n", argv[2]);
-        printf("argv[3]: i set to %s\n", argv[3]);
-        printf("argv[4]: j set to %s\n", argv[4]);
-    }
-    else if (argc != NARGS)
-    {
-        info();
-        return 1;
-    }
-    else if (atoi(argv[3]) > atoi(argv[4]))
-    {
-        printf("i must be less than j\n");
-        return 1;
-    }
-    else if (atoi(argv[3]) < 0 || atoi(argv[4]) > 31)
-    {
-        printf("i and j must be between 0 and 31\n");
-        return 1;
-    }
-    else
-        ;
+    argc != NARGS ? info() : 0;
     return 0;
 }
 
@@ -91,18 +71,13 @@ void result(int v_0, int v_t, int i, int j, int v_m)
     printf("    v_m in binary: ");
     for (int k = 31; k >= 0; k--)
     {
-
         printf("%d", (v_m >> k) & 1);
-        k == 0 ? printf("\n") : 0;
-        k % 4 == 0 ? printf(" ") : 0;
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int debug = 1;
-    if (checkargs(argc, argv, debug))
-        return 1;
+    if (checkargs(argc)) return 1;
 
     int v_0 = atoi(argv[1]);
     int v_t = atoi(argv[2]);
@@ -110,7 +85,6 @@ int main(int argc, char *argv[])
     int j = atoi(argv[4]);
 
     int v_m = mask_value(i, j, v_0);
-    printf("v_m: %d\n", v_m);
     v_m = insert_v_t(i, v_t, &v_m);
     v_m = or_v0(v_0, &v_m);
     result(v_0, v_t, i, j, v_m);
