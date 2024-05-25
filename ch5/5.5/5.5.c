@@ -2,10 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG 1
 #define NARGS 5
 
-unsigned checkargs(unsigned argc, char *argv[]);
 void info();
 
 unsigned mask(unsigned i, unsigned j);
@@ -17,42 +15,6 @@ unsigned mask(unsigned i, unsigned j)
     for (unsigned k = i; k <= j; k++)
         mask |= 1 << k;
     return mask;
-}
-
-unsigned checkargs(unsigned argc, char *argv[])
-{
-    if (DEBUG)
-    {
-
-        argv[1] = 15;
-        argv[2] = 0;
-        argv[3] = 0;
-        argv[4] = 3;
-
-        printf("============-DEBUG MODE-============\n");
-        printf("argv[1]: v_0 set to %d\n", argv[1]);
-        printf("argv[2]: v_t set to %d\n", argv[2]);
-        printf("argv[3]: i set to %d\n", argv[3]);
-        printf("argv[4]: j set to %d\n", argv[4]);
-    }
-    else if (argc != NARGS)
-    {
-        info();
-        return 1;
-    }
-    else if (atoi(argv[3]) > atoi(argv[4]))
-    {
-        printf("i must be less than j\n");
-        return 1;
-    }
-    else if (atoi(argv[3]) < 0 || atoi(argv[4]) > 31)
-    {
-        printf("i and j must be between 0 and 31\n");
-        return 1;
-    }
-    else
-        ;
-    return 0;
 }
 
 void info()
@@ -70,33 +32,30 @@ void result(unsigned v_0, unsigned v_t, unsigned i, unsigned j, unsigned v_m)
     printf("v_t: %d\n", v_t);
     printf("i: %d\n", i);
     printf("j: %d\n", j);
-    printf("after shifting v_t%d bits left: %d\n", i, v_t);
+    printf("after shifting v_t %d bits left: %d\n", i, v_t);
     printf("    v_m: %d\n", v_m);
-    printf("    v_m in binary: ");
-    for (unsigned k = 31; k >= 0; k--)
-    {
-
-        printf("%d", (v_m >> k) & 1);
-        k == 0 ? printf("\n") : 0;
-        k % 4 == 0 ? printf(" ") : 0;
-    }
 }
 
 int main(unsigned argc, char *argv[])
 {
-    if (checkargs(argc, *argv))
+    // print info if not enough args
+    if (argc != NARGS)
+    {
+        info();
         return 1;
-
+    }
     unsigned v_0 = atoi(argv[1]);
     unsigned v_t = atoi(argv[2]);
     unsigned i = atoi(argv[3]);
     unsigned j = atoi(argv[4]);
 
-    unsigned v_m;
-    v_m = v_0 & ~mask(i, j);
-    printf("v_m: %d\n", v_m);
-    v_m |= (v_t << i); // shift v_t i bits to the left and OR with
-    v_m |= v_0;
+    unsigned v_m = v_0;
+    unsigned m = mask(i, j);
+
+    v_m &= ~m; // zero out digits in range i to j by applying the ones complement of the mask to v_m
+    v_t <<= i; // insert the value v_t into the range i to j
+    v_t &= m; // mask v_t
+    v_m |= v_t; // OR v_t with v_m
     result(v_0, v_t, i, j, v_m);
     return 0;
 }
