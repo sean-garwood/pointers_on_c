@@ -1,9 +1,7 @@
 /* write a fn called max_list that returns the largest
 of an arbitrary number of integer args, which are terminated by an arg <0.*/
 
-#include <stdio.h>
-#include <stdarg.h>
-
+#include "../headers.h"
 int max_list(int first, ...);
 
 int main(int argc, char *argv[])
