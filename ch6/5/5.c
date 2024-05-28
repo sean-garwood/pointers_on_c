@@ -5,25 +5,25 @@ numbers. Use the bitwise operators to manipulate the bits.
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SIZE 2000000000
+#define SIZE 1e10
 #define TRUE 1
 #define FALSE 0
 
-#define INDEX(n) ((n) >> 5)       // equivalent to n/32
-#define BIT(n) (1U << ((n) & 31)) // equivalent to 2^(n%32)
+#define INDEX(n) ((n) >> 3)      // equivalent to n/8
+#define BIT(n) (1U << ((n) & 7)) // equivalent to 2^(n%8)
 
-unsigned int *get_nums(int size);
-void remove_nonprimes(unsigned int *arr, int size);
+char *get_nums(long size);
+void remove_nonprimes(char *arr, long size);
 
-unsigned int *get_nums(int size)
+char *get_nums(long size)
 {
-    unsigned int *arr = calloc((size >> 5) + 1, sizeof(unsigned int));
+    char *arr = calloc((size >> 3) + 1, sizeof(char));
     for (int i = 2; i < size; i++)
         arr[INDEX(i)] |= BIT(i); // set bit i to 1
     return arr;
 }
 
-void remove_nonprimes(unsigned int *arr, int size)
+void remove_nonprimes(char *arr, long size)
 {
     arr[INDEX(0)] &= ~BIT(0); // set bit 0 to 0
     arr[INDEX(1)] &= ~BIT(1); // set bit 1 to 0
@@ -39,13 +39,18 @@ void remove_nonprimes(unsigned int *arr, int size)
 
 int main(void)
 {
-    unsigned int *arr = get_nums(SIZE);
+    char *arr = get_nums(SIZE);
+    unsigned int count = 0;
     remove_nonprimes(arr, SIZE);
     for (int i = 0; i < SIZE; i++)
     {
         if (arr[INDEX(i)] & BIT(i)) // if bit i is 1
+        {
             printf("%d, ", i);
+            count++;
+        }
     }
+    printf("\nTotal primes: %d\n", count);
     free(arr);
     return 0;
 }
