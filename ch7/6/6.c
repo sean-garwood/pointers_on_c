@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #define MAX_POWER 15
 // chop off least significant digits and add them to buffer
 int reverse(int dollars, int *rev_digits);
@@ -38,8 +39,7 @@ int reverse(int dollars, int *buffer)
         buffer[i++] = dollars % 10;
         dollars /= 10;
     }
-    buffer[i] = -1;
-    return i - 1; // to be used in the print_num function
+    return i + 1; // to be used in the print_num function
 }
 
 void print_num(int dollars, char *buffer)
@@ -78,7 +78,7 @@ void print_num(int dollars, char *buffer)
 
 int main(int argc, char *argv[])
 {
-    char buffer[MAX_POWER];
+    char *buffer[MAX_POWER];
     // if no args, prompt user for input
     if (argc < 2)
     {
@@ -90,7 +90,9 @@ int main(int argc, char *argv[])
     else
     {
         int dollars = atoi(argv[1]);
-        print_num(dollars, NULL);
+        printf("Dollars: %d\n", dollars);
+        char words[MAX_POWER];
+        print_num(dollars, words);
     }
     return 0;
 }
