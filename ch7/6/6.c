@@ -33,66 +33,80 @@ const char *powers[] = {"", "thousand", "million", "billion", "trillion"};
  * digits */
 int reverse(int dollars, int *buffer)
 {
-    int i = 0;
+    int digits = 0;
     while (dollars > 0)
     {
-        buffer[i++] = dollars % 10;
+        buffer[digits++] = dollars % 10;
         dollars /= 10;
     }
-    return i + 1; // to be used in the print_num function
+    return digits;
 }
 
 void print_num(int dollars, char *buffer)
 {
-    int rev_digits[MAX_POWER]; // store the digits of the number in reverse order
+    int rev_digits[MAX_POWER]; // store the digits of the number (big endian)
     int digits = reverse(dollars, rev_digits);
-    // now the buffer is distributed into three-digit chunks
-    int power = 0;
-    for (int i = 0; i <= digits; i += 3)
+    const char **power = powers;
+    int index = 0;
+    printf("Digits: %d\n", digits);
+    while (index < digits)
     {
-        int chunk = rev_digits[i] + 10 * rev_digits[i + 1] + 100 * rev_digits[i + 2];
-        if (chunk > 0)
+        int num = rev_digits[index];
+        int next_num = index + 1 < digits ? rev_digits[index + 1] : 0;
+        switch (index % 3)
         {
-            if (buffer)
+        case 0:
+            if (next_num == 1)
             {
-                strcat(buffer, hundreds[rev_digits[i + 2]]);
-                if (rev_digits[i + 1] == 1)
-                {
-                    strcat(buffer, teens[rev_digits[i]]);
-                }
-                else
-                {
-                    strcat(buffer, tees[rev_digits[i + 1]]);
-                    strcat(buffer, ones[rev_digits[i]]);
-                }
-                strcat(buffer, powers[power]);
+                strcat(buffer, teens[num]);
+                strcat(buffer, " ");
+                index += 2;
             }
             else
             {
-                printf("%s %s %s %s\n", hundreds[rev_digits[i + 2]], rev_digits[i + 1] == 1 ? teens[rev_digits[i]] : tees[rev_digits[i + 1]], ones[rev_digits[i]], powers[power]);
+                strcat(buffer, ones[num]);
+                strcat(buffer, " ");
+                index++;
             }
+            break;
+        case 1:
+        {
+
+            strcat(buffer, tees[num]);
+            strcat(buffer, " ");
+            index++;
+            break;
         }
-        power++;
+        case 2:
+            strcat(buffer, hundreds[num]);
+            strcat(buffer, " ");
+            if (next_num)
+                strcat(buffer, *++power);
+            index++;
+            break;
+        }
     }
+    // reverse the buffer order if possible?
+    char *end = buffer + strlen(buffer) - 1;
 }
 
 int main(int argc, char *argv[])
 {
-    char *buffer[MAX_POWER];
+    char buffer[MAX_POWER];
     // if no args, prompt user for input
     if (argc < 2)
     {
         int dollars;
         printf("Enter a dollar amount: ");
         scanf("%u", &dollars);
-        print_num(dollars, NULL);
+        print_num(dollars, buffer);
     }
     else
     {
         int dollars = atoi(argv[1]);
         printf("Dollars: %d\n", dollars);
-        char words[MAX_POWER];
-        print_num(dollars, words);
+        print_num(dollars, buffer);
     }
+    printf("%s\n", buffer);
     return 0;
 }
