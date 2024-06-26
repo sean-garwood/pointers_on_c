@@ -18,7 +18,7 @@ int main(void)
     printf("Enter a string: ");
     fgets(str, SIZE, stdin);
     str[strcspn(str, "\n")] = 0;
-    printf("Length of string: %zu\n", my_strnlen(str, sizeof(str));
+    printf("Length of string: %zu\n", my_strnlen(str, sizeof(str)));
 
     return 0;
 }
