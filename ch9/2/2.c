@@ -5,10 +5,7 @@
  * Pass an arg containing sizeof(array) that holds str to be tested.
  */
 
-#include <stdio.h>
-#include <string.h>
-#define SIZE 100
-
+#include "../ch9.h"
 size_t my_strnlen(const char *str, size_t size);
 
 int main(void)

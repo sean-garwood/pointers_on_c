@@ -2,11 +2,7 @@
  * write a fn `my_strcat` that is similar to strcat but will not overflow the
  * destination array.
  */
-
-#include <stdio.h>
-#include <string.h>
-
-#define SIZE 10
+#include "../ch9.h"
 
 char *my_strcat(char *dest, const char *src, size_t len);
 

@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
-#define SIZE 10
-
+#include "../ch9.h"
 // write a function:
 void my_strncat(char *dest, char *src, int dest_len);
 

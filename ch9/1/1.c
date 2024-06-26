@@ -12,8 +12,7 @@
  * Use the char categories that are deined for the ctype.h library.
  */
 
-#include <stdio.h>
-#include <ctype.h>
+#include "../ch9.h"
 
 int main(void)
 {

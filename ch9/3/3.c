@@ -2,12 +2,7 @@
  * write a fn similar to strcpy but that doesn't overflow dest array. result of
  * copy must be a true string.
  */
-
-#include <stdio.h>
-#include <string.h>
-
-#define SIZE 10
-
+#include "../ch9.h"
 char *my_strcpy(char *dest, const char *src);
 
 int main(void)
