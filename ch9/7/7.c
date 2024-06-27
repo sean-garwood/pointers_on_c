@@ -11,7 +11,7 @@ char *my_strrchr(char const *str, int ch);
 int main(void)
 {
     const char str[] = "foo";
-    char ch = 'o';
+    char ch = SOUGHT;
     char *last = my_strrchr(str, ch);
     printf("last occurrence of %c in %s is %c\n", ch, str, *last);
     printf("this is in index %ld\n of %s", last - str, str);
