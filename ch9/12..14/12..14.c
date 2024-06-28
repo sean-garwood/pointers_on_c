@@ -19,15 +19,14 @@ int initialize(char *key)
 {
     const char test[] = "xxyyzz";
     strcpy(key, test);
-    // printf("Enter key: ");
+    printf("Enter key: ");
 
-    // if (*fgets(key, KEYLEN, stdin) == '\0')
-    // {
-    //     printf("Key is empty\n");
-    //     return 0;
-    // }
-    // remove newline
-    // key[strlen(key) - 1] = '\0';
+    if (*fgets(key, KEYLEN, stdin) == '\0')
+    {
+        printf("Key is empty\n");
+        return 0;
+    }
+    key[strlen(key) - 1] = '\0';
     while (*key)
     {
         if (!isalpha(*key))
@@ -43,8 +42,6 @@ int initialize(char *key)
     }
 
     return 1;
-
-    // return ( == NULL || !isalpha(*key)) ? 0 : 1;
 }
 
 int prepare(char *key)
@@ -56,7 +53,7 @@ int prepare(char *key)
 
     char key_uniques[KEYLEN] = {'\0'}; // unique chars go here
 
-    for (int i = 0; i < (int)strlen(key); i++) // convert key to lowercase
+    for (int i = 0; i < (int)strlen(key); i++)
     {
         if (strchr(key_uniques, key[i]) == NULL)       // check if key[i] is in key_uniques
             key_uniques[strlen(key_uniques)] = key[i]; // add to key_uniques
@@ -98,7 +95,6 @@ void encrypt(char *msg, const char *key)
     printf("Encrypted message: %s\n", msg);
 }
 
-// FIXIT: decrypt is not working. returns blank string.
 void decrypt(char *msg, const char *key)
 {
     for (int i = 0; msg[i]; i++)
