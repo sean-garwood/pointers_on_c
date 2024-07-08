@@ -38,5 +38,6 @@ int main(void)
         printf("%d\n", current->value);
         current = current->next;
     }
+    free(head);
     return 0;
 }
