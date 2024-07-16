@@ -9,6 +9,11 @@
  *     b. invoked once per node in the list.
  *
  * what does the fn need to know about the nodes in the list?
+ *
+ * not sure which function this is referring to. Traverse just needs to check
+ * whether the current node is NULL or not. The callback function needs to know
+ * ... nothing? It's just a function that takes a Node pointer as an argument,
+ * prints its address and data.
  */
 
 #include "2.h"
