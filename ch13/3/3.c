@@ -75,12 +75,12 @@ Node *delete_trx(void *list, void *current)
     // ...code...
 }
 
-void forward(void *current)
+void forward(void *current, void *trx)
 {
     // ...code...
 }
 
-void backward(void *current)
+void backward(void *current, void *trx)
 {
     // ...code...
 }
