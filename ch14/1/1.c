@@ -24,30 +24,38 @@
 
 int main(void)
 {
-    // test
-    print_ledger(0);
+    int something_random = 2457;
+    print_ledger(something_random);
     return 0;
 }
 
-void print_ledger(int option)
+void print_ledger(int some_random_int_that_isnt_a_flag)
 {
-    /*
-     * option codes:
-     * 0 - default
-     * 1 - detailed
-     * 2 - long
-     * 3 - detailed and long
-     */
+#ifdef DEFAULT
+    print_ledger_default(some_random_int_that_isnt_a_flag);
+#endif
+#ifdef DETAILED
+    print_ledger_detailed(some_random_int_that_isnt_a_flag);
+#endif
+#ifdef LONG
+    print_ledger_long(some_random_int_that_isnt_a_flag);
+#endif
+}
 
-    switch (option)
-    {
-    case 0:
-        print_ledger_default(option);
-        break;
-    case 1:
-        print_ledger_detailed(option);
-    case 2:
-        print_ledger_long(option);
-        break;
-    }
+void print_ledger_default(int crap)
+{
+    puts("DEFAULT LEDGER: ...");
+    printf("crap: %d\n", crap);
+}
+
+void print_ledger_detailed(int crap)
+{
+    puts("DETAILED LEDGER: ...\n");
+    printf("crap: %d\n", crap);
+}
+
+void print_ledger_long(int crap)
+{
+    puts("LONG LEDGER: ...\n");
+    printf("crap: %d\n", crap);
 }
