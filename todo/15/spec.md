@@ -81,3 +81,10 @@ Prompts for trx and processes them one by one.
 
 `total` computes and prints total value of all parts in inventory.
 `end` ends the program.
+
+## hints
+
+- use the part number to determine where in the inv file a part is written.
+  - first num is 1, so use part num 0 to store other info (maybe a pointer to
+    item 1? total value?)
+- when deleting part, set desc to an empty string.
