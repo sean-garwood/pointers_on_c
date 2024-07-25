@@ -18,9 +18,9 @@ typedef struct part
 
 typedef struct
 {
-    Part *totals;   // part num zero, grand totals
-    char *filename; // name of the file to persist data
-    FILE *record;   // binary file to persist data.
+    Part *totals;         // part num zero, grand totals
+    const char *filename; // name of the file to persist data
+    FILE *record;         // binary file to persist data.
 } Inventory;
 
 void init_inventory(const char *filename);

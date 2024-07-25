@@ -14,12 +14,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    puts("welcome!");
+
     const char *filename = argv[1];
     // check if the file exists
     FILE *file = fopen(argv[1], "rb+");
     if (file == NULL)
     {
-        fclose(file);
         file = fopen(argv[1], "wb+");
         if (file == NULL)
         {
@@ -28,7 +29,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    // store the file pointer in the inventory
+    puts("file opened");
+    prompt();
+    init_inventory(filename);
     inv->record = file;
 
     // setup is complete
@@ -36,8 +39,8 @@ int main(int argc, char *argv[])
     // inventory and parts
     //      see ./spec.md for details
 
-    char input[MAXLEN], command[MAXLEN], params[MAXLEN];
-    int first_letter_of_input, second_letter_of_input;
+    char input[MAXLEN];
+    int first_letter_of_input;
 
     // before processing the input, we ought to first parse it to see what is
     // being requested
@@ -48,17 +51,14 @@ int main(int argc, char *argv[])
     int repl = 1;
     while (repl) // todo: guard for 'end'
     {
-        prompt();
-        init_inventory(filename);
         if (fgets(input, MAXLEN, stdin) == NULL)
         {
             printf("Error reading input\n");
             continue;
         }
-        else if ((first_letter_of_input = input[0]) == 'e')
+        first_letter_of_input = input[0];
+        if ((first_letter_of_input) == 'e')
             break;
-        else
-            second_letter_of_input = input[1];
 
         switch (first_letter_of_input)
         {
@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
     }
 
     // cleanup
+    fwrite(inv->totals, sizeof(Part), 1, inv->record);
     fclose(inv->record);
     free(inv);
 
@@ -119,8 +120,6 @@ void new_part(const char *desc, unsigned int qty, float cost)
     strncpy(new_part->description, desc, MAX_DESC_LEN);
 
     new_part->cost_each = qty * cost;
-
-    return 0;
 }
 
 void buy(unsigned int part_number, unsigned int qty, float cost)
@@ -133,14 +132,11 @@ void buy(unsigned int part_number, unsigned int qty, float cost)
     if (current->part_number != part_number)
     {
         printf("Part number %d not found\n", part_number);
-        return 1;
     }
 
     current->quantity += qty;
 
     current->cost_each = (current->cost_each + (qty * cost)) / current->quantity;
-
-    return 0;
 }
 
 void sell(unsigned int part_number, unsigned int qty, float price)
@@ -153,44 +149,35 @@ void sell(unsigned int part_number, unsigned int qty, float price)
     if (num_not_found || qty_not_enough)
     {
         char *msg = num_not_found ? "part number" : "insufficient quantity";
-        printf(msg);
-        return 1;
+        puts(msg);
     }
 
-    current->quantity -= qty;
-    current->cost_each = (current->cost_each - (qty * price)) / current->quantity;
-    return 0;
+    target->quantity -= qty;
+    target->cost_each = (target->cost_each - (qty * price)) / target->quantity;
 }
 
 void delete(unsigned int part_number)
 {
     Part *target = find_part(part_number);
     if (target->part_number != part_number || target == NULL)
-    {
         printf("Part number %d not found\n", part_number);
-        return 1;
-    }
+
     clear_attrs(target);
-    return 0;
 }
 
 void print(unsigned int part_number)
 {
     Part *target = find_part(part_number);
     if (target->part_number != part_number || target == NULL)
-    {
         printf("Part number %d not found\n", part_number);
-        return 1;
-    }
 
     printf("Part number: %d\n\
             Description: %s\n\
             Quantity: %d\n\
             Cost each: %.2f\n\
             Total cost: %.2f\n",
-           target->part_number, target->description, target->quantity, target->cost_each, target->quantity * target->cost_each);
-
-    return 0;
+           target->part_number, target->description, target->quantity,
+           target->cost_each, target->quantity * target->cost_each);
 }
 
 void print_all()
@@ -222,8 +209,8 @@ Part *find_part(unsigned int part_number)
 Part *find_empty_part()
 {
     Part *current = inv->totals;
-    while (current->description != "\0" &&
-           (current->next) != NULL)
+    while ((current->description != NULL) &&
+           (current->next != NULL))
         current = current->next;
 
     return current;
@@ -242,6 +229,8 @@ void init_inventory(const char *filename)
     inv->totals = totals;
     inv->filename = filename;
     inv->record = fopen(filename, "rb+");
+
+    init_part_zero();
 }
 
 void init_part_zero()
