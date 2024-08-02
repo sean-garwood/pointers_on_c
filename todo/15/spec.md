@@ -69,14 +69,6 @@ Prompts for trx and processes them one by one.
   
   `print all` prints all parts in the inventory in tabular form.
 
-### my idea
-
-    `print part-number...`
-
-    the total value of all such parts on hand. if one arg, print a line. if
-    multiple, print given in tabular form. `*` is a wildcard that matches all
-    parts.
-
 ## Unary Commands
 
 `total` computes and prints total value of all parts in inventory.
