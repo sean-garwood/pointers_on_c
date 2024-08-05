@@ -2,132 +2,69 @@
 #include "headers.h"
 #endif
 
-Part *find_part(Inventory *inv, unsigned int part_num)
+Part *init_part_zero(void)
 {
-    Part *part = inv->part_zero;
-    while (part != NULL && part->id != part_num)
+    /*
+     * 1. check if the zero part is already initialized
+     *    if inv->zero is not NULL, return it
+     *    else, allocate memory for the zero part
+     *       if allocation fails, print an error message and exit
+     *       else, initialize the zero part
+     *
+     */
+
+    Part *zero;
+    // check if the zero part is already initialized
+    if (inv->zero != NULL)
     {
-        part = part->next;
+        return inv->zero;
+    }
+    else
+    {
+        zero = NEWPART(zero);
+        zero->data = (PartData){0, 0, 0.0, 0.0, "HEAD"};
     }
 
-    return part;
+    return zero;
 }
 
-Part *create_part_zero(void)
+int new_part(TrxData *data)
 {
-    Part *part_zero = calloc(1, sizeof(Part));
-    if (part_zero == NULL)
-    {
-        perror("Error allocating memory for part_zero");
-        return NULL;
-    }
-
-    strcpy(part_zero->desc, "***Totals***");
-
-    return part_zero;
+    // stub
+    return 0;
 }
-
-int new_part(Inventory *inv, const char *desc, unsigned int qty, float unit_cost)
+int buy_part(TrxData *data)
 {
-    unsigned int new_part_id = get_part_id(inv);
-    unsigned int max_part_id = inv->totals.num_parts + 1;
-    Part *new_part = malloc(sizeof(Part));
-    if (new_part == NULL)
-    {
-        perror("Error allocating memory for new part");
-        return FAILURE;
-    }
-
-    new_part->id = new_part_id;
-    if (new_part_id == 1)
-        inv->part_zero->next = new_part;
-
-    new_part->qty = qty;
-    new_part->unit_cost = unit_cost;
-    new_part->unit_price = 0.0;
-    strncpy(new_part->desc, desc, sizeof(new_part->desc) - 1);
-    new_part->desc[sizeof(new_part->desc) - 1] = '\0';
-    new_part->next =
-        (new_part->id == max_part_id) ? NULL : find_part(inv, new_part_id + 1);
-
-    return SUCCESS;
+    // stub
+    return 0;
 }
-
-int buy_part(Inventory *inv, unsigned int part_num, unsigned int qty, float this_unit_cost)
+int sell_part(TrxData *data)
 {
-    Part *part = find_part(inv, part_num);
-    if (part == NULL || qty <= 0 || part->desc[0] == '\0')
-        return FAILURE;
-
-    float old_unit_cost = part->unit_cost;
-    unsigned int old_qty = part->qty;
-
-    part->qty += qty;
-    part->unit_cost = ((old_unit_cost * old_qty) + (this_unit_cost * qty)) /
-                      part->qty;
-
-    return SUCCESS;
+    // stub
+    return 0;
 }
-
-int sell_part(Inventory *inv, unsigned int part_num, unsigned int qty, float unit_price)
+int delete_part(TrxData *data)
 {
-    Part *part = find_part(inv, part_num);
-    if (part == NULL || part->qty < qty || qty <= 0)
-        return FAILURE;
-
-    float old_unit_price = part->unit_price;
-    unsigned int old_qty = part->qty;
-
-    part->qty -= qty;
-    part->unit_price = ((old_unit_price * old_qty) + (unit_price * qty)) /
-                       part->qty;
-
-    return SUCCESS;
+    // stub
+    return 0;
 }
-
-int delete_part(Inventory *inv, unsigned int part_num)
+int print_one_part(TrxData *data)
 {
-    Part *part;
-    if ((part = find_part(inv, part_num)) == NULL)
-        return FAILURE;
-
-    part->qty = 0;
-    part->unit_cost = 0;
-    part->unit_price = 0;
-    part->desc[0] = '\0';
-
-    return SUCCESS;
+    // stub
+    return 0;
 }
-
-int print_part(Inventory *inv, unsigned int part_num)
+int print_all_parts(TrxData *data)
 {
-    Part *part = find_part(inv, part_num);
-    if (part == NULL || part->desc[0] == '\0')
-    {
-        return FAILURE;
-    }
-    printf("Part number: %u\n", part->id);
-    printf("Description: %s\n", part->desc);
-    printf("Quantity: %u\n", part->qty);
-    printf("Unit cost: %.2f\n", part->unit_cost);
-    printf("Unit price: %.2f\n", part->unit_price);
-    printf("\n");
-    return SUCCESS;
+    // stub
+    return 0;
 }
-
-unsigned int get_part_id(Inventory *inv)
+int total_inventory(TrxData *data)
 {
-    unsigned int part_id = 1;
-    Part *part = inv->part_zero;
-
-    for (; part != NULL; part = part->next)
-    {
-        if (part->desc[0] == '\0')
-        {
-            return part_id;
-        }
-        part_id++;
-    }
-
-    return part_id;
+    // stub
+    return 0;
+}
+int quit(TrxData *data)
+{
+    // stub
+    return 0;
 }
