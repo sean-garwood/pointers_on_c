@@ -4,46 +4,38 @@
 
 int main(int argc, const char **argv)
 {
-    ARGCHECK(argc);
-
-    const char *filename = argv[1];
     FILE *bin;
-    char buffer[MAXINPUT];      // stdin goes here
-    char temp_buffer[MAXINPUT]; // for parsing
+    Part *zero = MALLOCPART(zero);
+    inv = MALLOCINV(inv);
+    char *input[MAXINPUT];
+    int result = SUCCESS;
 
-    if ((bin = fopen(filename, "wb+")) == NULL)
+    init_inv(argv[1], bin, zero);
+    while (*input != 'q' && result == SUCCESS)
     {
-        perror("fopen");
-        exit(EXIT_FAILURE);
+        prompt();
+        fgets(*input, MAXINPUT, stdin);
+        Trx *trx = new_trx(*input);
+        result = trx->op(&trx->trx_data);
+        free(trx);
     }
+    assert(write_inv() == SUCCESS);
+}
 
-    init_inv(bin);
+void prompt()
+{
+    printf("Enter transaction\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+           "n <id>,<qty>,<cost>,<price> - new part",
+           "b <id>,<qty> - buy part",
+           "s <id>,<qty> - sell part",
+           "d <id> - delete part",
+           "p <id> - print part",
+           "p - print all parts",
+           "q - quit",
+           "t - print totals");
+}
 
-    // now we're ready to start taking some user input!
-
-    // get stdin and copy to buffer
-    char *args[MAXTRXARGS]; // declare args outside of the while loop
-
-    while (fgets(buffer, MAXINPUT, stdin) != NULL && buffer[0] != 'q')
-    {
-        // get trxtype
-
-        /* parse the input */
-        TrxType trx_t = set_trx_type(buffer);
-        Trx *trx;
-
-        buffer[strlen(buffer) - 1] = '\0';
-        strcpy(temp_buffer, buffer + 2);
-
-        // get the arguments
-        if (get_args(trx_t, temp_buffer, args) == FAILURE)
-        {
-            puts("get_args failed");
-            return EXIT_FAILURE;
-        }
-
-        trx = init_trx(trx_t, args);
-        debug(trx);
-    }
-    return write_inv();
+void goodbye()
+{
+    printf("Goodbye\n");
 }

@@ -1,30 +1,42 @@
-
-#ifndef TRX_Hinit_part
 #define TRX_H
-
-#ifndef HEADERS_H
-#include "headers.h"
-#endif
 
 #define MAXTRXARGS 4
 #define TSIZE sizeof(Trx)
-#define NEWTRX(t)           \
+#define MALLOCTRX(t)        \
     (Trx *)malloc(TSIZE);   \
     if ((t) == NULL)        \
     {                       \
         perror("calloc");   \
         exit(EXIT_FAILURE); \
     }
+#define MALLOCTRXDATA(td)               \
+    (TrxData *)malloc(sizeof(TrxData)); \
+    if ((td) == NULL)                   \
+    {                                   \
+        perror("calloc");               \
+        exit(EXIT_FAILURE);             \
+    }
 
 #define TRXOPS {new_part, buy_part, sell_part, delete_part, print_one_part, print_all_parts, total_inventory}
+
+// callback functions
+int new_part(Trx *trx);
+int buy_part(Trx *trx);
+int sell_part(Trx *trx);
+int delete_part(Trx *trx);
+int print_one_part(Trx *trx);
+int print_all_parts(Trx *trx);
+int total_inventory(Trx *trx);
+int quit(Trx *trx);
 
 typedef union trx_data
 {
     struct
     {
-        const char *desc;
+        unsigned int id;
         unsigned int qty;
         float unit_cost;
+        const char *desc;
     } new;
     struct
     {
@@ -46,46 +58,46 @@ typedef union trx_data
     {
         unsigned int id;
     } print_one;
+    struct
+    {
+    } print_all;
+    struct
+    {
+    } total;
+    struct
+    {
+    } quit;
 } TrxData;
-
-// callback functions
-int new_part(TrxData *data);
-int buy_part(TrxData *data);
-int sell_part(TrxData *data);
-int delete_part(TrxData *data);
-int print_one_part(TrxData *data);
-int print_all_parts(TrxData *data);
-int total_inventory(TrxData *data);
-int quit(TrxData *data);
-
-typedef enum
-{
-    NEW,
-    BUY,
-    SELL,
-    DELETE,
-    PRINT_ONE,
-    PRINT_ALL,
-    TOTAL,
-    QUIT
-} TrxType;
 
 typedef struct trx
 {
-    TrxType type;
-    TrxData data;
-    int (*op)(TrxData *data);
+    char *args; // string of comma-separated args
+    enum
+    {
+        NEW,       // 3 args
+        BUY,       // 3 args
+        SELL,      // 3 args
+        DELETE,    // 1 arg
+        PRINT_ONE, // 1 arg
+        PRINT_ALL, // 0 args
+        TOTAL,     // 0 args
+        QUIT       // 0 args
+    } type;
+    TrxData trx_data;
+    int (*op)(struct trx *trx);
 } Trx;
 
-/* functions to process the stdin input
-   input is of the form "<command> <arg1>,<arg2>,<arg3>"
-   args are optional
-   arg type is determined by the command */
+int trx_argc(const char *t_args);
+int get_trx_type(const char *t_args);
+void set_trx_data(Trx *trx, const char *input);
+Trx *new_trx(const char *t_args);
 
-TrxType set_trx_type(const char *input);
-int get_args(TrxType trx_type, const char *rest_of_input, char **args);
-TrxData set_trx_data(Trx *trx, char **args);
-
-Trx *init_trx(TrxType trx_t, char **args);
-
-#endif
+/* callbacks/operations */
+int new_part(TrxData *t_data);
+int buy_part(TrxData *t_data);
+int sell_part(TrxData *t_data);
+int delete_part(TrxData *t_data);
+int print_one_part(TrxData *t_data);
+int print_all_parts(TrxData *t_data);
+int total_inventory(TrxData *t_data);
+int quit(TrxData *t_data);

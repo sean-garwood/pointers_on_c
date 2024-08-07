@@ -30,7 +30,7 @@
 #define TRUE 1
 #define FALSE 0
 #define MAXDESC 21
-#define MAXINPUT 1024 // most stdin will take
+#define MAXINPUT 100 // most stdin will take
 
 void debug(Trx *trx);
 #endif

@@ -2,64 +2,43 @@
 #include "headers.h"
 #endif
 
-/*
- *
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- */
-int new_part(TrxData *data)
+unsigned int get_id()
 {
-    // stub
-    return 0;
+    Part *current = inv->zero;
+    unsigned int id = 0;
+    while (current != NULL && current->data.desc[0] != '\0')
+    {
+        id++;
+        current = current->next;
+    }
+    return id;
 }
-int buy_part(TrxData *data)
+
+Part *find_part(unsigned int loc)
 {
-    // stub
-    return 0;
+    Part *current = inv->zero;
+    while (current != NULL && current->next->data.id != loc)
+    {
+        current = current->next;
+    }
+    return current;
 }
-int sell_part(TrxData *data)
+
+Part *init_part_zero()
 {
-    // stub
-    return 0;
+    Part *zero = MALLOCPART(zero);
+    zero->data.id = 0;
+    zero->data.qty = 0;
+    strcpy(zero->data.desc, "HEAD\0");
+    zero->next = NULL;
+    return zero;
 }
-int delete_part(TrxData *data)
+
+void print_part_data(Part *p)
 {
-    // stub
-    return 0;
-}
-int print_one_part(TrxData *data)
-{
-    // stub
-    return 0;
-}
-int print_all_parts(TrxData *data)
-{
-    // stub
-    return 0;
-}
-int total_inventory(TrxData *data)
-{
-    // stub
-    return 0;
-}
-int quit(TrxData *data)
-{
-    // stub
-    return 0;
+    printf("ID: %u\n", p->data.id);
+    printf("Description: %s\n", p->data.desc);
+    printf("Quantity: %u\n", p->data.qty);
+    printf("Unit Cost: %.2f\n", p->data.unit_cost);
+    printf("Unit Price: %.2f\n", p->data.unit_price);
 }
