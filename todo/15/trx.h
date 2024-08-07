@@ -84,8 +84,8 @@ typedef struct trx
 
 TrxType set_trx_type(const char *input);
 int get_args(TrxType trx_type, const char *rest_of_input, char **args);
-TrxData set_trx_data(Trx *trx, const char **args);
+TrxData set_trx_data(Trx *trx, char **args);
 
-Trx *init_trx(const char *command, const char **args);
+Trx *init_trx(TrxType trx_t, char **args);
 
 #endif

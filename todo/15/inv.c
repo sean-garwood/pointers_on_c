@@ -22,14 +22,12 @@ void init_inv(FILE *bin)
 
 int write_inv()
 {
-    if (inv->zero == NULL)
-    {
-        return FAILURE;
-    }
-    fwrite(inv, ISIZE, 1, inv->output);
     return SUCCESS;
 }
 
-void debug()
+void debug(Trx *trx)
 {
+    assert(sizeof(*trx) == TSIZE);
+    assert((Trx *)trx != NULL);
+    puts("tests passed!");
 }

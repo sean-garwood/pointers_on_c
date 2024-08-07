@@ -33,8 +33,6 @@ typedef struct inventory
 void init_inv(FILE *bin);
 int write_inv(void);
 
-void debug(void);
-
 // inventory pointer is global
 extern Inventory *inv;
 

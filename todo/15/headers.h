@@ -32,4 +32,5 @@
 #define MAXDESC 21
 #define MAXINPUT 1024 // most stdin will take
 
+void debug(Trx *trx);
 #endif

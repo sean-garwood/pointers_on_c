@@ -26,26 +26,24 @@ int main(int argc, const char **argv)
 
     while (fgets(buffer, MAXINPUT, stdin) != NULL && buffer[0] != 'q')
     {
-        /* parse the input */
-        Trx *trx = NEWTRX(trx);
-        trx->type = set_trx_type(buffer);
-        // null-terminate the buffer
-        buffer[strlen(buffer) - 1] = '\0';
+        // get trxtype
 
-        strcpy(temp_buffer, buffer + 2); // copy the rest of the buffer to temp_buffer
-        if (temp_buffer[sizeof(temp_buffer) - 1] == '\n')
+        /* parse the input */
+        TrxType trx_t = set_trx_type(buffer);
+        Trx *trx;
+
+        buffer[strlen(buffer) - 1] = '\0';
+        strcpy(temp_buffer, buffer + 2);
+
+        // get the arguments
+        if (get_args(trx_t, temp_buffer, args) == FAILURE)
         {
-            temp_buffer[sizeof(temp_buffer) - 1] = '\0';
+            puts("get_args failed");
+            return EXIT_FAILURE;
         }
 
-        // get the args
-        assert(get_args(trx->type, temp_buffer, args) == SUCCESS);
-        assert(args != NULL);
+        trx = init_trx(trx_t, args);
+        debug(trx);
     }
-
-    fwrite(inv->zero, PSIZE, 1, inv->output);
-    fclose(bin);
-    free(inv->zero);
-    free(inv);
-    return SUCCESS;
+    return write_inv();
 }

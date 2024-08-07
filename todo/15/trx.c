@@ -13,10 +13,19 @@
 TrxType set_trx_type(const char *input)
 {
     int command_char; // command_char is the first character of the command
-    int seventh_char; // seventh_char is the seventh character of the input
 
     if ((command_char = tolower(*input)) == 'p')
-        return ((seventh_char = tolower(*(input + 6))) == 'o') ? PRINT_ONE : PRINT_ALL;
+    {
+        // check if there are more characters in the command
+        if (strlen(input) <= 2 && (*(input + 1) == '\0'))
+        {
+            return PRINT_ALL;
+        }
+        else
+        {
+            return PRINT_ONE;
+        }
+    }
 
     switch (command_char)
     {
@@ -42,7 +51,7 @@ TrxType set_trx_type(const char *input)
 int get_args(TrxType trx_type, const char *rest_of_input, char **args)
 {
     size_t argc;
-    if (trx_type <= PRINT_ALL && trx_type >= NEW)
+    if (trx_type >= PRINT_ALL && trx_type >= NEW)
     {
         args = NULL;
         return SUCCESS;
@@ -54,17 +63,6 @@ int get_args(TrxType trx_type, const char *rest_of_input, char **args)
     else
         return FAILURE;
 
-    char *arg[MAXINPUT];
-
-    /*
-     * strtok() is a function that takes a string and a delimiter
-     * and splits the string into tokens based on the delimiter
-     * strtok() is destructive, so we need to copy the string
-     * to a temporary buffer before calling strtok()
-     * strtok() returns a pointer to the first token
-     * and NULL when there are no more tokens
-     */
-
     char *temp = strdup(rest_of_input);
     char *token = strtok(temp, ",");
     for (size_t i = 0; i < argc; i++)
@@ -73,14 +71,14 @@ int get_args(TrxType trx_type, const char *rest_of_input, char **args)
         {
             break;
         }
-        arg[i] = token;
+        *(args + i) = token;
         token = strtok(NULL, ",");
     }
 
     return SUCCESS;
 }
 
-TrxData set_trx_data(Trx *trx, const char **args)
+TrxData set_trx_data(Trx *trx, char **args)
 {
     switch (trx->type)
     {
@@ -112,14 +110,14 @@ TrxData set_trx_data(Trx *trx, const char **args)
     return trx->data;
 }
 
-Trx *init_trx(const char *command, const char **args)
+Trx *init_trx(TrxType trx_t, char **args)
 {
     // initialize an array of function pointers using TRXOPS
     static int (*trx_ops[])(TrxData *) = TRXOPS;
     Trx *trx = NEWTRX(trx);
 
-    trx->type = set_trx_type(command);
+    trx->type = trx_t;
     trx->data = set_trx_data(trx, args);
-    trx->op = trx_ops[trx->type];
+    trx->op = trx_ops[trx_t];
     return trx;
 }
