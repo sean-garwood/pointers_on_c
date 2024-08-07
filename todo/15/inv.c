@@ -19,10 +19,22 @@ void make_inv(FILE *bin)
         inv->output = bin;
     }
 }
+
+int write_inv()
+{
+    if (inv->zero == NULL)
+    {
+        return FAILURE;
+    }
+    fwrite(inv, ISIZE, 1, inv->output);
+    return SUCCESS;
+}
+
 void debug()
 {
     assert(inv->zero != NULL);
     assert(inv->output != NULL);
     printf("part size: %lu\ninv size: %lu\ntrx size: %lu\n", PSIZE, ISIZE, TSIZE);
+    assert(write_inv() == SUCCESS);
     fclose(inv->output);
 }
