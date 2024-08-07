@@ -4,49 +4,25 @@
 
 Inventory *inv;
 
-/*
- * TODO: Implement the following functions
- *
- * check_file
- * get_file_mode
- * init inventory
- */
-
-FILE *read_file(const char *filename)
+void make_inv(FILE *bin)
 {
-    // check if the given filename exists
-    return fopen(filename, "r");
-}
-
-const char *get_file_mode(const char *filename, FILE *file)
-{
-    // check if the file is readable
-    if (file == NULL)
+    if (fgetc(bin) == EOF)
     {
-        return "w+b";
+        inv = BLANKINV(inv);
+        inv->output = bin;
+        inv->zero = BLANKPART(inv->zero);
     }
-    fclose(file);
-    return "r+b";
-}
-
-FILE *open_file(const char *filename)
-{
-    // get the file mode
-    return fopen(filename, get_file_mode(filename, read_file(filename)));
-}
-
-Inventory *init_inventory(FILE *output)
-{
-    // allocate memory for the inventory
-    inv = (Inventory *)calloc(1, ISIZE);
-    if (inv == NULL)
+    else
     {
-        perror("calloc");
-        return NULL;
+        rewind(bin);
+        inv = MALLOCINV(inv);
+        inv->output = bin;
     }
-
-    inv->output = output;
-    return inv;
 }
-
-// test main
+void debug()
+{
+    assert(inv->zero != NULL);
+    assert(inv->output != NULL);
+    printf("part size: %lu\ninv size: %lu\ntrx size: %lu\n", PSIZE, ISIZE, TSIZE);
+    fclose(inv->output);
+}

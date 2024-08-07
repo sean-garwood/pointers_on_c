@@ -7,17 +7,25 @@ int main(int argc, const char **argv)
     ARGCHECK(argc);
 
     const char *filename = argv[1];
-    Part *zero;
-
-    inv = init_inventory(open_file(filename));
-
-    zero = init_part_zero();
-    if (inv->zero == NULL)
+    FILE *bin; // pointer to bin file from filename
+    /***************************************************************************/
+    // open the file
+    bin = fopen(filename, "wb+");
+    if (bin == NULL)
     {
-        inv->zero = zero;
+        perror("fopen");
+        exit(EXIT_FAILURE);
     }
-    assert(inv->zero == zero);
-    assert(zero != NULL);
 
-    return 0;
+    // fread the inventory from the file
+    // we don't know if the file is empty!!!
+    // so we need to check for EOF
+    // if the file is empty, we need to create a new inventory
+    // if the file is not empty, we need to read the inventory
+
+    // check if empty
+    make_inv(bin);
+    debug();
+
+    return SUCCESS;
 }

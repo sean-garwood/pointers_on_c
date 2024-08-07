@@ -2,32 +2,27 @@
 #include "headers.h"
 #endif
 
-Part *init_part_zero(void)
-{
-    /*
-     * 1. check if the zero part is already initialized
-     *    if inv->zero is not NULL, return it
-     *    else, allocate memory for the zero part
-     *       if allocation fails, print an error message and exit
-     *       else, initialize the zero part
-     *
-     */
+/*
+ *
 
-    Part *zero;
-    // check if the zero part is already initialized
-    if (inv->zero != NULL)
-    {
-        return inv->zero;
-    }
-    else
-    {
-        zero = NEWPART(zero);
-        zero->data = (PartData){0, 0, 0.0, 0.0, "HEAD"};
-    }
 
-    return zero;
-}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ */
 int new_part(TrxData *data)
 {
     // stub

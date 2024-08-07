@@ -1,5 +1,5 @@
 
-#ifndef TRX_H
+#ifndef TRX_Hinit_part
 #define TRX_H
 
 #ifndef HEADERS_H

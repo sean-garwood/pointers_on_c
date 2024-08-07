@@ -6,6 +6,23 @@
 #endif
 
 #define ISIZE sizeof(Inventory)
+// for calloc
+#define BLANKINV(i)                \
+    (Inventory *)calloc(1, ISIZE); \
+    if ((i) == NULL)               \
+    {                              \
+        perror("calloc");          \
+        exit(EXIT_FAILURE);        \
+    }
+
+// for malloc
+#define MALLOCINV(i)            \
+    (Inventory *)malloc(ISIZE); \
+    if ((i) == NULL)            \
+    {                           \
+        perror("calloc");       \
+        exit(EXIT_FAILURE);     \
+    }
 
 typedef struct inventory
 {
@@ -13,10 +30,9 @@ typedef struct inventory
     Part *zero;   // head of the list
 } Inventory;
 
-FILE *check_file(const char *filename);
-const char *get_file_mode(const char *filename, FILE *file);
-FILE *open_file(const char *filename);
-Inventory *init_inventory(FILE *output);
+void make_inv(FILE *bin);
+
+void debug(void);
 
 // inventory pointer is global
 extern Inventory *inv;

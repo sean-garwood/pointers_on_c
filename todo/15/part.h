@@ -7,8 +7,9 @@
 
 #endif
 #define MAXDESC 21
+#define MAXPARTS 100 // for now
 #define PSIZE sizeof(Part)
-#define NEWPART(p)            \
+#define BLANKPART(p)          \
     (Part *)calloc(1, PSIZE); \
     if ((p) == NULL)          \
     {                         \
@@ -31,11 +32,4 @@ typedef struct part
     struct part *next;
 } Part;
 
-/*
- * TODO: Implement the following functions
- *
- * init_part_zero
- */
-
-Part *init_part_zero(void);
 #endif
