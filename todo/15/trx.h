@@ -83,9 +83,9 @@ typedef struct trx
    arg type is determined by the command */
 
 TrxType set_trx_type(const char *input);
-const char **get_args(TrxType trx_type, const char *rest_of_input);
+int get_args(TrxType trx_type, const char *rest_of_input, char **args);
 TrxData set_trx_data(Trx *trx, const char **args);
 
-Trx init_trx(const char *command, const char **args);
+Trx *init_trx(const char *command, const char **args);
 
 #endif

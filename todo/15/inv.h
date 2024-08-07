@@ -30,7 +30,8 @@ typedef struct inventory
     Part *zero;   // head of the list
 } Inventory;
 
-void make_inv(FILE *bin);
+void init_inv(FILE *bin);
+int write_inv(void);
 
 void debug(void);
 

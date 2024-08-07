@@ -29,7 +29,7 @@
 #define FAILURE 1
 #define TRUE 1
 #define FALSE 0
-#define BUFSIZE 21
 #define MAXDESC 21
+#define MAXINPUT 1024 // most stdin will take
 
 #endif

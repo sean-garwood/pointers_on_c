@@ -4,7 +4,7 @@
 
 Inventory *inv;
 
-void make_inv(FILE *bin)
+void init_inv(FILE *bin)
 {
     if (fgetc(bin) == EOF)
     {
@@ -32,9 +32,4 @@ int write_inv()
 
 void debug()
 {
-    assert(inv->zero != NULL);
-    assert(inv->output != NULL);
-    printf("part size: %lu\ninv size: %lu\ntrx size: %lu\n", PSIZE, ISIZE, TSIZE);
-    assert(write_inv() == SUCCESS);
-    fclose(inv->output);
 }

@@ -38,32 +38,46 @@ TrxType set_trx_type(const char *input)
     }
 }
 
-const char **get_args(TrxType trx_type, const char *rest_of_input)
+// parse the rest of the input, store in args
+int get_args(TrxType trx_type, const char *rest_of_input, char **args)
 {
-    if (trx_type >= PRINT_ALL)
-        return NULL;
-
-    int array_size; // depends on trx_type
-                    // todo: make own fn
-    char *arg;
-
-    if (trx_type <= SELL)
-        array_size = 3;
-    else if (trx_type <= DELETE && trx_type >= NEW)
-        array_size = 1;
-
-    char *args[array_size];
-
-    for (int i = 0; i < array_size; i++)
+    size_t argc;
+    if (trx_type <= PRINT_ALL && trx_type >= NEW)
     {
-        // store the word before the comma into arg
-        arg = strtok((char *)rest_of_input, ",");
-        args[i] = arg;
+        args = NULL;
+        return SUCCESS;
+    }
+    else if (trx_type <= SELL)
+        argc = 3;
+    else if (trx_type <= DELETE)
+        argc = 1;
+    else
+        return FAILURE;
+
+    char *arg[MAXINPUT];
+
+    /*
+     * strtok() is a function that takes a string and a delimiter
+     * and splits the string into tokens based on the delimiter
+     * strtok() is destructive, so we need to copy the string
+     * to a temporary buffer before calling strtok()
+     * strtok() returns a pointer to the first token
+     * and NULL when there are no more tokens
+     */
+
+    char *temp = strdup(rest_of_input);
+    char *token = strtok(temp, ",");
+    for (size_t i = 0; i < argc; i++)
+    {
+        if (token == NULL)
+        {
+            break;
+        }
+        arg[i] = token;
+        token = strtok(NULL, ",");
     }
 
-    return args; // compiler warning: returns address of local variable
-                 // todo: fix this by writing a void fn that modifies an external array
-                 // by reference, eg void get_args(TrxType trx_type, const char *rest_of_input, char **args)
+    return SUCCESS;
 }
 
 TrxData set_trx_data(Trx *trx, const char **args)
@@ -98,7 +112,7 @@ TrxData set_trx_data(Trx *trx, const char **args)
     return trx->data;
 }
 
-Trx init_trx(const char *command, const char **args)
+Trx *init_trx(const char *command, const char **args)
 {
     // initialize an array of function pointers using TRXOPS
     static int (*trx_ops[])(TrxData *) = TRXOPS;
@@ -107,5 +121,5 @@ Trx init_trx(const char *command, const char **args)
     trx->type = set_trx_type(command);
     trx->data = set_trx_data(trx, args);
     trx->op = trx_ops[trx->type];
-    return *trx;
+    return trx;
 }
