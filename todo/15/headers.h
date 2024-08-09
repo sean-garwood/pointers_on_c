@@ -9,14 +9,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef TRX_H
+#include "trx.h"
+#endif
 #ifndef PART_H
 #include "part.h"
 #endif
 #ifndef INV_H
 #include "inv.h"
-#endif
-#ifndef TRX_H
-#include "trx.h"
 #endif
 
 #define ARGCHECK(x)                      \
@@ -32,5 +32,5 @@
 #define MAXDESC 21
 #define MAXINPUT 100 // most stdin will take
 
-void debug(Trx *trx);
+void prompt(void);
 #endif

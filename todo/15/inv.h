@@ -1,4 +1,6 @@
+#ifndef INV_H
 #define INV_H
+
 #ifndef HEADERS_H
 #include "headers.h"
 #endif
@@ -29,15 +31,16 @@ typedef struct inventory
     struct
     {
         unsigned int parts;
-        unsigned int types_on_hand;
         unsigned int qty;
         float cost;
         float price;
     } totals;
 } Inventory;
 
-void init_inv(const char *filename, FILE *bin, Part *zero);
-int write_inv(void);
-
+int init_inv(const char *filename);
+int read_inv(FILE *bin);
+int write_inv(const char *filename);
+int free_memory(Trx *trx);
 // inventory pointer is global
 extern Inventory *inv;
+#endif

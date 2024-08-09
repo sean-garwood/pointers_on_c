@@ -7,104 +7,61 @@
 // must appear exactly as shown
 // example: "p 1" -> 1
 // example: "n a,2,3" -> 3
-// example: "p" -> 0
 
-// return the number of optional args in t_args
-int trx_argc(const char *t_args)
+int get_trx_type(const char *t_argv)
 {
-    int trx_char = *t_args;
-    int trx_len = strlen(t_args); // includes null terminator
-
-    if (trx_char == 'n' || trx_char == 'b' || trx_char == 's')
-        return 3;
-    else if (trx_char == 'd' || trx_char == 'p')
+    switch (t_argv[0])
     {
-        if (trx_char == 'd')
-            return 1;
-        else
-            return (trx_len > 2) ? 1 : 0;
-    }
-    else if (trx_char == 'q' || trx_char == 't')
-        return 0;
-    else
-    {
-        printf("bad trx_char: %c\n", trx_char);
+    case 'n':
+        return NEW;
+    case 'b':
+        return BUY;
+    case 's':
+        return SELL;
+    case 'd':
+        return DELETE;
+    case 'p':
+        return (strlen(t_argv) > 2) ? PRINT_ONE : PRINT_ALL;
+    case 't':
+        return TOTAL;
+    case 'q':
+        return QUIT;
+    default:
         return -1;
     }
 }
 
-int get_trx_type(const char *t_args)
-{
-    int argc = trx_argc(t_args);
-    switch (argc)
-    {
-    case 3:
-        switch (*t_args)
-        {
-        case 'n':
-            return NEW;
-        case 'b':
-            return BUY;
-        case 's':
-            return SELL;
-        default:
-        }
-    case 1:
-        switch (*t_args)
-        {
-        case 'd':
-            return DELETE;
-        case 'p':
-            return (argc == 1) ? PRINT_ALL : PRINT_ONE;
-        default:
-        }
-    case 0:
-        switch (*t_args)
-        {
-        case 'q':
-            return QUIT;
-        case 't':
-            return TOTAL;
-        default:
-            printf("bad trx_char: %c\n", *t_args);
-            break;
-        }
-    }
-
-    return -1;
-}
-
 void set_trx_data(Trx *trx, const char *input)
 {
-    // parse the comma-seaparated args in place
     int type = trx->type;
-    TrxData *data = &trx->trx_data;
-    char *args = input + 2; // skip the command and space
+    char *args = malloc(strlen(input) - 1); // skip the command and space
+    strcpy(args, input + 2);                // ...
+    args[strlen(args) - 1] = '\0';          // remove the newline
 
     // write the data to the appropriate struct
     switch (type)
     {
     case NEW:
-        data->new.id = get_id();
-        data->new.desc = strtok(args, ",");
-        data->new.qty = atoi(strtok(NULL, ","));
-        data->new.unit_cost = atof(strtok(NULL, ","));
+        trx->t_data.new.id = get_id();
+        trx->t_data.new.desc = strtok(args, ",");
+        trx->t_data.new.qty = atoi(strtok(NULL, ","));
+        trx->t_data.new.unit_cost = atof(strtok(NULL, ","));
         break;
     case BUY:
-        data->buy.id = atoi(strtok(args, ","));
-        data->buy.qty = atoi(strtok(NULL, ","));
-        data->buy.unit_cost = atof(strtok(NULL, ","));
+        trx->t_data.buy.id = atoi(strtok(args, ","));
+        trx->t_data.buy.qty = atoi(strtok(NULL, ","));
+        trx->t_data.buy.unit_cost = atof(strtok(NULL, ","));
         break;
     case SELL:
-        data->sell.id = atoi(strtok(args, ","));
-        data->sell.qty = atoi(strtok(NULL, ","));
-        data->sell.unit_price = atof(strtok(NULL, ","));
+        trx->t_data.sell.id = atoi(strtok(args, ","));
+        trx->t_data.sell.qty = atoi(strtok(NULL, ","));
+        trx->t_data.sell.unit_price = atof(strtok(NULL, ","));
         break;
     case DELETE:
-        data->delete.id = atoi(args);
+        trx->t_data.delete.id = atoi(args);
         break;
     case PRINT_ONE:
-        data->print_one.id = atoi(args);
+        trx->t_data.print_one.id = atoi(args);
         break;
     case PRINT_ALL:
     case TOTAL:
@@ -113,56 +70,80 @@ void set_trx_data(Trx *trx, const char *input)
     }
 }
 
-Trx *new_trx(const char *t_args)
+int process_trx(Trx *trx, const char *t_args)
 {
-    static int(*ops[]) = TRXOPS;
-    Trx *trx = MALLOCTRX(trx);
-    char *command = *t_args;
+    // function pointers to callbacks
+    static int (*ops[])(Trx *trx) = {new_part, buy_part, sell_part, delete_part, print_one, print_all_parts, total_inventory, quit};
+
     trx->type = get_trx_type(t_args);
-    set_trx_data(trx->type, t_args);
+    set_trx_data(trx, t_args);
     trx->op = ops[trx->type];
-    return trx;
+    return trx->op(trx);
 }
 
 /* callbacks/operations */
+
 int new_part(Trx *trx)
 {
-    TrxData *t_data = &trx->trx_data;
-    Part *p = MALLOCPART(p);
 
-    p->data.id = t_data->new.id;
-    p->data.qty = t_data->new.qty;
-    p->data.unit_cost = t_data->new.unit_cost;
-    strcpy(p->data.desc, t_data->new.desc);
+    unsigned int part_id = trx->t_data.new.id;
+    Part *p;
+    Part *curr = inv->zero;
+
+    while (curr->data.id < part_id - 1)
+    {
+        curr = curr->next;
+    }
+
+    if (curr->data.id == part_id)
+    {
+        printf("Part already exists.\nOverwriting data...");
+        curr->data.qty = trx->t_data.new.qty;
+        curr->data.unit_cost = trx->t_data.new.unit_cost;
+        strcpy(curr->data.desc, trx->t_data.new.desc);
+        return SUCCESS;
+    }
+
+    p = MALLOCPART(p);
+
+    p->data.id = trx->t_data.new.id;
+    p->data.qty = trx->t_data.new.qty;
+    p->data.unit_cost = trx->t_data.new.unit_cost;
+    strcpy(p->data.desc, trx->t_data.new.desc);
+    curr->next = p;
+
     return SUCCESS;
 }
 
 int buy_part(Trx *trx)
 {
-    TrxData *t_data = &trx->trx_data;
-    Part *p = find_part(t_data->buy.id);
+
+    Part *p = find_part(trx->t_data.buy.id);
+
     if (p == NULL)
     {
         printf("Part not found.\n");
         return FAILURE;
     }
+
     unsigned int old_qty = p->data.qty;
     float old_cost = p->data.unit_cost;
-    p->data.qty += t_data->buy.qty;
-    p->data.unit_cost = (old_qty * old_cost + t_data->buy.qty * t_data->buy.unit_cost) / p->data.qty;
+    p->data.qty += trx->t_data.buy.qty;
+    p->data.unit_cost = (old_qty * old_cost + trx->t_data.buy.qty * trx->t_data.buy.unit_cost) / p->data.qty;
     return SUCCESS;
 }
 
 int sell_part(Trx *trx)
 {
-    TrxData *t_data = &trx->trx_data;
-    Part *p = find_part(t_data->sell.id);
+
+    Part *p = find_part(trx->t_data.sell.id);
+
     if (p == NULL)
     {
         printf("Part not found.\n");
         return FAILURE;
     }
-    else if (p->data.qty < t_data->sell.qty)
+    else if (p->data.qty < trx->t_data.sell.qty)
     {
         printf("Not enough stock.\n");
         return FAILURE;
@@ -171,36 +152,45 @@ int sell_part(Trx *trx)
     {
         unsigned int old_qty = p->data.qty;
         float old_price = p->data.unit_price;
-        p->data.qty -= t_data->sell.qty;
-        p->data.unit_price = (old_qty * old_price + t_data->sell.qty * t_data->sell.unit_price) / p->data.qty;
+        p->data.qty -= trx->t_data.sell.qty;
+        p->data.unit_price = (old_qty * old_price + trx->t_data.sell.qty * trx->t_data.sell.unit_price) / p->data.qty;
     }
     return SUCCESS;
 }
 
 int delete_part(Trx *trx)
 {
-    TrxData *t_data = &trx->trx_data;
-    Part *p = find_part(t_data->delete.id);
+
+    unsigned int target_id = trx->t_data.delete.id;
+    Part *p = find_part(target_id);
+
     if (p == NULL)
     {
         printf("Part not found.\n");
         return FAILURE;
     }
-
-    p->data.desc[0] = '\0';
-    p->data.qty = 0;
-    p->data.unit_cost = 0;
-    p->data.unit_price = 0;
+    else if (target_id == 0)
+    {
+        printf("Cannot delete head.\n");
+        return FAILURE;
+    }
+    else
+    {
+        p->data.desc[0] = '\0';
+        p->data.qty = 0;
+        p->data.unit_cost = 0;
+        p->data.unit_price = 0;
+    }
     return SUCCESS;
 }
 
-int print_one_part(Trx *trx)
+int print_one(Trx *trx)
 {
-    TrxData *t_data = &trx->trx_data;
+
     Part *current = inv->zero;
     while (current != NULL)
     {
-        if (current->data.id == t_data->print_one.id)
+        if (current->data.id == trx->t_data.print_one.id)
         {
             print_part_data(current);
             return SUCCESS;
@@ -223,16 +213,21 @@ int print_all_parts(Trx *trx)
 
 int total_inventory(Trx *trx)
 {
-    unsigned int total_qty = 0;
-    float total_cost = 0;
-    float total_price = 0;
     Part *current = inv->zero;
 
     while (current != NULL)
     {
-        total_qty += current->data.qty;
-        total_cost += current->data.qty * current->data.unit_cost;
-        total_price += current->data.qty * current->data.unit_price;
+        inv->totals.qty += current->data.qty;
+        // check for HEAD or empty description
+
+        if (current->data.id != 0 && current->data.desc[0] != '\0')
+        {
+            inv->totals.qty++;
+        }
+        {
+            inv->totals.cost += current->data.unit_cost * current->data.qty;
+            inv->totals.price += current->data.unit_price * current->data.qty;
+        }
         current = current->next;
     }
     return SUCCESS;
@@ -240,5 +235,5 @@ int total_inventory(Trx *trx)
 
 int quit(Trx *trx)
 {
-    return SUCCESS;
+    return FAILURE; // set result to FAILURE to exit loop
 }

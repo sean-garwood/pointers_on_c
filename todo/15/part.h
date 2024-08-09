@@ -1,5 +1,6 @@
-
+#ifndef PART_H
 #define PART_H
+
 #ifndef HEADERS_H
 #include "headers.h"
 #endif
@@ -30,3 +31,6 @@ typedef struct part
 unsigned int get_id(void);
 Part *find_part(unsigned int loc);
 Part *init_part_zero(void);
+Part *part_zero(FILE *bin);
+void print_part_data(Part *p);
+#endif

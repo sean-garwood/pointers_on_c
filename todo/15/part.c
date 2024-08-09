@@ -6,11 +6,13 @@ unsigned int get_id()
 {
     Part *current = inv->zero;
     unsigned int id = 0;
+
     while (current != NULL && current->data.desc[0] != '\0')
     {
         id++;
         current = current->next;
     }
+
     return id;
 }
 
@@ -24,6 +26,22 @@ Part *find_part(unsigned int loc)
     return current;
 }
 
+Part *part_zero(FILE *bin)
+{
+    Part *zero = MALLOCPART(zero);
+
+    if (((fread(inv, ISIZE, 1, bin)) == FALSE) ||
+        (fread(zero, PSIZE, 1, bin)) == FALSE)
+    {
+        perror("fread");
+        return NULL;
+    }
+
+    inv->zero = zero;
+    inv->zero->next = NULL;
+
+    return zero;
+}
 Part *init_part_zero()
 {
     Part *zero = MALLOCPART(zero);
@@ -31,6 +49,7 @@ Part *init_part_zero()
     zero->data.qty = 0;
     strcpy(zero->data.desc, "HEAD\0");
     zero->next = NULL;
+    inv->zero = zero;
     return zero;
 }
 

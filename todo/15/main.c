@@ -4,22 +4,21 @@
 
 int main(int argc, const char **argv)
 {
-    FILE *bin;
-    Part *zero = MALLOCPART(zero);
-    inv = MALLOCINV(inv);
-    char *input[MAXINPUT];
     int result = SUCCESS;
+    char input[MAXINPUT];
+    const char *filename = argv[1];
+    Trx *trx = MALLOCTRX(trx);
 
-    init_inv(argv[1], bin, zero);
-    while (*input != 'q' && result == SUCCESS)
+    init_inv(filename);
+
+    while (result == SUCCESS)
     {
         prompt();
-        fgets(*input, MAXINPUT, stdin);
-        Trx *trx = new_trx(*input);
-        result = trx->op(&trx->trx_data);
-        free(trx);
+        fgets(input, MAXINPUT, stdin);
+        result = process_trx(trx, input);
     }
-    assert(write_inv() == SUCCESS);
+    assert(write_inv(filename) == SUCCESS);
+    return free_memory(trx);
 }
 
 void prompt()

@@ -1,4 +1,9 @@
+#ifndef TRX_H
 #define TRX_H
+
+#ifndef HEADERS_H
+#include "headers.h"
+#endif
 
 #define MAXTRXARGS 4
 #define TSIZE sizeof(Trx)
@@ -16,18 +21,6 @@
         perror("calloc");               \
         exit(EXIT_FAILURE);             \
     }
-
-#define TRXOPS {new_part, buy_part, sell_part, delete_part, print_one_part, print_all_parts, total_inventory}
-
-// callback functions
-int new_part(Trx *trx);
-int buy_part(Trx *trx);
-int sell_part(Trx *trx);
-int delete_part(Trx *trx);
-int print_one_part(Trx *trx);
-int print_all_parts(Trx *trx);
-int total_inventory(Trx *trx);
-int quit(Trx *trx);
 
 typedef union trx_data
 {
@@ -83,21 +76,24 @@ typedef struct trx
         TOTAL,     // 0 args
         QUIT       // 0 args
     } type;
-    TrxData trx_data;
+    TrxData t_data;
     int (*op)(struct trx *trx);
 } Trx;
 
-int trx_argc(const char *t_args);
 int get_trx_type(const char *t_args);
 void set_trx_data(Trx *trx, const char *input);
 Trx *new_trx(const char *t_args);
+int process_trx(Trx *trx, const char *t_args);
 
-/* callbacks/operations */
-int new_part(TrxData *t_data);
-int buy_part(TrxData *t_data);
-int sell_part(TrxData *t_data);
-int delete_part(TrxData *t_data);
-int print_one_part(TrxData *t_data);
-int print_all_parts(TrxData *t_data);
-int total_inventory(TrxData *t_data);
-int quit(TrxData *t_data);
+// callback functions
+int new_part(Trx *trx);
+int buy_part(Trx *trx);
+int sell_part(Trx *trx);
+int delete_part(Trx *trx);
+int print_one(Trx *trx);
+int print_all_parts(Trx *trx);
+int total_inventory(Trx *trx);
+int quit(Trx *trx);
+
+#define TRXOPS ({new_part, buy_part, sell_part, delete_part, print_one_part, print_all_parts, total_inventory})
+#endif
