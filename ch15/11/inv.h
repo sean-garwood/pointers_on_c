@@ -6,16 +6,6 @@
 #endif
 
 #define ISIZE sizeof(Inventory)
-// for calloc
-#define BLANKINV(i)                \
-    (Inventory *)calloc(1, ISIZE); \
-    if ((i) == NULL)               \
-    {                              \
-        perror("calloc");          \
-        exit(EXIT_FAILURE);        \
-    }
-
-// for malloc
 #define MALLOCINV(i)            \
     (Inventory *)malloc(ISIZE); \
     if ((i) == NULL)            \

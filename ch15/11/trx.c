@@ -76,6 +76,9 @@ int process_trx(Trx *trx, const char *t_args)
     static int (*ops[])(Trx *trx) = {new_part, buy_part, sell_part, delete_part, print_one, print_all_parts, total_inventory, quit};
 
     trx->type = get_trx_type(t_args);
+    if (trx->type == QUIT)
+        return QUIT;
+
     set_trx_data(trx, t_args);
     trx->op = ops[trx->type];
     return trx->op(trx);
@@ -148,7 +151,6 @@ int sell_part(Trx *trx)
     qty_to_sell = trx->t_data.sell.qty;
     old_price = to_sell->data.unit_price;
     new_price = trx->t_data.sell.unit_price;
-
     if (to_sell == NULL)
     {
         printf("Part not found.\n");
@@ -159,10 +161,15 @@ int sell_part(Trx *trx)
         printf("Not enough stock.\n");
         return FAILURE;
     }
+    else if (qty_to_sell <= 0)
+    {
+        printf("Error: Invalid quantity.\nCan't sell zero or negative quantity.\n");
+        return FAILURE;
+    }
     else
     {
         to_sell->data.qty -= qty_to_sell;
-        to_sell->data.unit_price = (old_qty * old_price + qty_to_sell * new_price) / to_sell->data.qty;
+        to_sell->data.unit_price = (old_price + qty_to_sell * new_price) / qty_to_sell;
     }
     return SUCCESS;
 }
@@ -245,5 +252,5 @@ int total_inventory(Trx *trx)
 
 int quit(Trx *trx)
 {
-    return FAILURE; // set result to FAILURE to exit loop
+    return QUIT; // set result to FAILURE to exit loop
 }

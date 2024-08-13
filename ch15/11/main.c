@@ -11,7 +11,7 @@ int main(int argc, const char **argv)
 
     init_inv(filename);
 
-    while (result == SUCCESS)
+    while (result >= SUCCESS)
     {
         prompt();
         fgets(input, MAXINPUT, stdin);
@@ -24,7 +24,8 @@ int main(int argc, const char **argv)
 
 void prompt()
 {
-    printf("Enter transaction\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+    printf("%s%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
+           "\n***Transaction entry***\n",
            "n <id>,<qty>,<cost>,<price> - new part",
            "b <id>,<qty> - buy part",
            "s <id>,<qty> - sell part",
@@ -32,10 +33,5 @@ void prompt()
            "p <id> - print part",
            "p - print all parts",
            "q - quit",
-           "t - print totals");
-}
-
-void goodbye()
-{
-    printf("Goodbye\n");
+           "t - print totals\n");
 }

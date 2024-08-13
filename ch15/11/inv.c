@@ -49,8 +49,16 @@ int read_inv(FILE *bin)
 int write_inv(const char *filename)
 {
 
+    int empty_inv;
     FILE *updated; // updated file goes here
     Part *current = inv->zero;
+    empty_inv = (current->next == NULL) ? TRUE : FALSE;
+    if (empty_inv)
+    {
+        puts("No parts to write\n");
+        return SUCCESS;
+    }
+
     // open the file for writing
     updated = fopen(filename, "wb");
     // POINT TO THE NEW FILE
@@ -71,7 +79,7 @@ int write_inv(const char *filename)
         current = current->next;
     }
     fclose(updated);
-    printf("Inventory written\n");
+    puts("\nInventory written\n");
     return SUCCESS;
 }
 
@@ -89,5 +97,6 @@ int free_memory(Trx *trx)
 
     free(trx);
     free(inv);
+    puts("Goodbye\n");
     return SUCCESS;
 }
