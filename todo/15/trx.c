@@ -90,7 +90,7 @@ int new_part(Trx *trx)
     Part *p;
     Part *curr = inv->zero;
 
-    while (curr->data.id < part_id - 1)
+    while (curr->next != NULL && curr->data.id != part_id)
     {
         curr = curr->next;
     }
@@ -118,7 +118,10 @@ int new_part(Trx *trx)
 int buy_part(Trx *trx)
 {
 
-    Part *p = find_part(trx->t_data.buy.id);
+    unsigned int old_qty, id;
+    float old_cost;
+    id = trx->t_data.buy.id;
+    Part *p = find_part(id);
 
     if (p == NULL)
     {
@@ -126,34 +129,40 @@ int buy_part(Trx *trx)
         return FAILURE;
     }
 
-    unsigned int old_qty = p->data.qty;
-    float old_cost = p->data.unit_cost;
-    p->data.qty += trx->t_data.buy.qty;
-    p->data.unit_cost = (old_qty * old_cost + trx->t_data.buy.qty * trx->t_data.buy.unit_cost) / p->data.qty;
+    old_qty = p->data.qty;
+    old_cost = p->data.unit_cost;
+    p->data.qty = trx->t_data.buy.qty + old_qty;
+    p->data.unit_cost = (old_qty * old_cost +
+                         trx->t_data.buy.qty * trx->t_data.buy.unit_cost) /
+                        p->data.qty;
     return SUCCESS;
 }
 
 int sell_part(Trx *trx)
 {
+    unsigned int old_qty, qty_to_sell;
+    float old_price, new_price;
+    Part *to_sell = find_part(trx->t_data.sell.id);
 
-    Part *p = find_part(trx->t_data.sell.id);
+    old_qty = to_sell->data.qty;
+    qty_to_sell = trx->t_data.sell.qty;
+    old_price = to_sell->data.unit_price;
+    new_price = trx->t_data.sell.unit_price;
 
-    if (p == NULL)
+    if (to_sell == NULL)
     {
         printf("Part not found.\n");
         return FAILURE;
     }
-    else if (p->data.qty < trx->t_data.sell.qty)
+    else if (old_qty < qty_to_sell)
     {
         printf("Not enough stock.\n");
         return FAILURE;
     }
     else
     {
-        unsigned int old_qty = p->data.qty;
-        float old_price = p->data.unit_price;
-        p->data.qty -= trx->t_data.sell.qty;
-        p->data.unit_price = (old_qty * old_price + trx->t_data.sell.qty * trx->t_data.sell.unit_price) / p->data.qty;
+        to_sell->data.qty -= qty_to_sell;
+        to_sell->data.unit_price = (old_qty * old_price + qty_to_sell * new_price) / to_sell->data.qty;
     }
     return SUCCESS;
 }
@@ -213,23 +222,24 @@ int print_all_parts(Trx *trx)
 
 int total_inventory(Trx *trx)
 {
-    Part *current = inv->zero;
+    Part *current = inv->zero->next;
 
-    while (current != NULL)
+    unsigned int types, qty_oh;
+    float cost, price;
+    types = qty_oh = 0;
+    cost = price = 0.0;
+    while (current != NULL && current->data.desc[0] != '\0')
     {
-        inv->totals.qty += current->data.qty;
-        // check for HEAD or empty description
-
-        if (current->data.id != 0 && current->data.desc[0] != '\0')
-        {
-            inv->totals.qty++;
-        }
-        {
-            inv->totals.cost += current->data.unit_cost * current->data.qty;
-            inv->totals.price += current->data.unit_price * current->data.qty;
-        }
+        types++;
+        qty_oh += current->data.qty;
+        cost += (current->data.unit_cost * current->data.qty);
+        price += (current->data.unit_price * current->data.qty);
         current = current->next;
     }
+    printf("Total parts: %u\n", types);
+    printf("Total quantity: %u\n", qty_oh);
+    printf("Total cost: %.2f\n", cost);
+    printf("Total price: %.2f\n", price);
     return SUCCESS;
 }
 

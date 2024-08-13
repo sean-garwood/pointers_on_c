@@ -19,11 +19,11 @@ unsigned int get_id()
 Part *find_part(unsigned int loc)
 {
     Part *current = inv->zero;
-    while (current != NULL && current->next->data.id != loc)
+    while (current->next && (current->data.id < loc))
     {
         current = current->next;
     }
-    return current;
+    return (current->data.id == loc) ? current : NULL;
 }
 
 Part *part_zero(FILE *bin)

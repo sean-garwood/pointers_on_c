@@ -17,8 +17,9 @@ int main(int argc, const char **argv)
         fgets(input, MAXINPUT, stdin);
         result = process_trx(trx, input);
     }
-    assert(write_inv(filename) == SUCCESS);
-    return free_memory(trx);
+    result = write_inv(filename);
+    result = free_memory(trx);
+    return result;
 }
 
 void prompt()

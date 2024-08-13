@@ -26,15 +26,7 @@
 
 typedef struct inventory
 {
-    FILE *output; // binary data file to read/write inventory data
-    Part *zero;   // head of the list
-    struct
-    {
-        unsigned int parts;
-        unsigned int qty;
-        float cost;
-        float price;
-    } totals;
+    Part *zero; // head of the list
 } Inventory;
 
 int init_inv(const char *filename);

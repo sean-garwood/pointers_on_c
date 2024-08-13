@@ -8,25 +8,21 @@ int init_inv(const char *filename)
 {
     int result;
     inv = MALLOCINV(inv);
-    FILE *test_bin = fopen(filename, "rb+");
     FILE *bin;
-    if ((bin = test_bin) == NULL)
+    bin = fopen(filename, "rb");
+    if (bin == NULL)
     {
-        bin = fopen(filename, "wb+");
-        if (bin == NULL)
-        {
-            perror("fopen");
-            return FAILURE;
-        }
-        inv->output = bin;
-        inv->zero = init_part_zero();
+        (inv->zero = init_part_zero());
     }
     else
-        result = read_inv(bin);
+    {
+        (result = read_inv(bin));
+    }
 
     result = ((inv->zero != NULL) == TRUE) ? SUCCESS : FAILURE;
     result == SUCCESS ? printf("Inventory initialized\n") : printf("Inventory not initialized\n");
-    fclose(bin);
+    if (bin != NULL)
+        fclose(bin);
 
     return result;
 }
@@ -55,7 +51,6 @@ int write_inv(const char *filename)
 
     FILE *updated; // updated file goes here
     Part *current = inv->zero;
-    // close the inv->output file that was used to read
     // open the file for writing
     updated = fopen(filename, "wb");
     // POINT TO THE NEW FILE
