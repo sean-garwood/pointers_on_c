@@ -11,6 +11,11 @@ See [todo/](./todo/) for more details.
 
 8.6-8.8: Instructiuons are stupid long and kind of nonsensical.
 
-### Stuck
+### Needs improvement
 
-15.11: super tough, but I'm getting there
+15.11: Refactor, it's a mess.
+       * error handling
+       * void pointers to handle generic callbacks
+       * write generic traversal function to pass with trx
+       * no need for inv struct--just need to init part zero
+       * check on the PartData struct--it's a bit weird with the union
