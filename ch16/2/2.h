@@ -1,8 +1,6 @@
 #ifndef _2_H
 #define _2_H
 
-#include <time.h>
-
 #define SIDES 6
 #define MIN 1
 #define MAX (SIDES)

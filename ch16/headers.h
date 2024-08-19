@@ -32,4 +32,16 @@
 #include "7/7.h"
 #endif
 
+#ifndef _8_H
+#include "8/8.h"
+#endif
+
+#ifndef _9_H
+#include "9/9.h"
+#endif
+
+#ifndef _10_H
+#include "10/10.h"
+#endif
+
 #endif // HEADERS_H

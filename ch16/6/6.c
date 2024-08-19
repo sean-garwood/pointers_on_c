@@ -41,7 +41,6 @@ int main(int argc, char **argv)
     double amount = atof(argv[1]);
     double interest = atof(argv[2]);
     int years = atoi(argv[3]);
-
     double payment_amount = payment(amount, interest, years);
 
     printf("Monthly payment: %.2f\n", payment_amount);

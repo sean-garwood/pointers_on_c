@@ -1,8 +1,6 @@
 #ifndef _5_H
 #define _5_H
 
-#include <math.h>
-
 // constants
 #define A 10.45
 #define B 10
