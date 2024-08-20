@@ -5,7 +5,7 @@
 #include "tree.h"
 #endif
 
-#define ROOT 1
+#define ROOT 1 // root node. index 0 is not used
 #define TREE_SIZE 100
 #define ARRAY_SIZE (TREE_SIZE + 1)
 

@@ -182,3 +182,172 @@ Walk down the tree, going left or right according to comparison
 
 The [example implementations](./ex/) illustrate ADTs, but are inadequate for use
 in real programs.
+
+### Genericity
+
+*The ability to write a set of functions in which the types of the data have not
+yet been decided.*
+
+One gap in C is the fact that it is very hard to act generically upon data
+types, even if they are very similar, due to the strongly typed syntax and
+variance in sizes of data types.
+
+#### Generic stack implementation
+
+[g_stack.h](./ex/stack/g_stack.h) contains a `#define` statement whose body is
+the entire implementation of an arrayed stack.
+
+The args to the macro are
+
+* `STACK_T`: The type of value to be stored in the stack
+* `SUFFIX`: The name of the type prefixed with an underscore
+* `STACK_SIZE`: The size of the static array that will hold the stack
+
+[g_client.c](./ex/g_client.c) is an implementation of a static array stack
+implementation. It instantiates two stacks: one of floats, and one of ints.
+
+##### Issues
+
+The example above does not allow for creation of more than one stack of the same
+type; it would need to be modified to take an `ID` argument
+
+Also, the following responsibilities fall on the user with this implementation:
+
+* decide on naming convention to avoid name clashes amongst stacks of different
+  types
+* create only one set of stack routines for each data type
+* use proper name when accessing a stack
+* pass proper stack struct to functions
+
+## Summary
+
+Three techs for obtaining memory for abstract data types:
+
+1. static array
+  fixed size
+2. dynamically allocated array
+  size computed at runtime, realloc if needed during
+3. dynamically allocated linked struct
+  no limits. Just use this.
+
+### Stacks
+
+Stack->LIFO, Queue->FIFO
+
+stack can set `stack_t top_element = -1`
+
+push
+
+1. increment `top_element`
+1. store value in array
+
+pop
+
+1. remove/return value
+1. decrement `top_element`
+
+#### Dynamic stacks
+
+Two add'l fns required:
+
+1. create stack to specified size
+1. destroy stack (pop all, free memory)
+
+#### Singly-linked list stack
+
+Values pushed to beginning
+Stack popped by removing first element
+memory freed during runtime
+
+### Queues
+
+Stack->LIFO, Queue->FIFO
+
+Circular arrays more appropriate than ordinary array: when a var used as a
+subscript for a circular array is incr/decr past end of array, its value wraps
+to zero.
+
+To determine when full: use var that counts number of inserted values
+To use front/rear pointers: must always be at least one empty element in the
+array.
+
+### BST
+
+A binary search tree is a struct that is either empty or has a value and up to
+two (left and right) child BSTs.
+
+Big-O is much shorter than O(n); i think it's O(log n) average
+
+#### caution: beware orphaned nodes
+
+#### BST traversal
+
+Four orders:
+
+1. Pre-order: NLR
+
+* process node
+* traverse left subtree
+* traverse right subtree
+
+2. In-order: LNR
+
+* traverse left subtree
+* process node
+* traverse right subtree
+
+3. Post-order: LRN
+
+* traverse left subtree
+* traverse right subtree
+* process node
+
+4. Breadth-first: NLR*
+
+Don't use silly arrays to do this; use a linked struct
+
+* process node
+* process left child
+* process right child
+* root = (left.nil?) ? right : left
+
+#### Problems
+
+1. only have one stack, queue or tree
+
+Solved by seaparating allocation of the struct from the functions that
+manipulate it.
+
+The resulting loss of encapsulation increases the chance of errors.
+
+2. Inability to declare stacks, queues, trees off diff types
+
+Separate copy of ADT funs for each type makes maintaining code more difficult.
+
+Better to implement code with a #define, which is then expanded with each type.
+choose the naming convention carefully.
+
+Make ADT typeless by casting to `void *`, but lose type checking.
+
+Avoid name clashes among versions
+
+## Cautions
+
+1. Use of assertions to check for mem allocations is dangerous. just check if
+   null pointer was returned instead.
+1. calcs for arrayed binary tree assume array subscripts begin at one.
+1. Encapsulating data in module that services it prevents client from accessing
+   the data incorrectly.
+1. no type checking with typless/generic functions
+
+## tips
+
+1. Avoid fns with side effects => program easier to understand
+1. Interface should not divulge details of implementation
+1. Parameterized data types are more malleable
+1. Only advertized interface for a module should be public
+1. Use assertions to guard against (unrecoverable) illegal ops
+1. Diff implementations should adhere to a comon interface => interchangeability
+1. Reuse, don't rewrite. Keep it DRY
+1. Iteration more efficient than tail recursion, but more strict checks/error
+   handling required.
