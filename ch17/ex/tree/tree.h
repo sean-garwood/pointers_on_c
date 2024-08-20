@@ -20,4 +20,12 @@ TREE_T find(TREE_T value);
 void pre_order_traverse(
     void (*callback)(TREE_T value));
 
+/*
+ * EXERCISE ANSWERS
+ */
+
+/* in-order traversal */
+void in_order_traverse(void (*callback)(TREE_T value));
+/* post-order traversal */
+void post_order_traverse(void (*callback)(TREE_T value));
 #endif // TREE_H

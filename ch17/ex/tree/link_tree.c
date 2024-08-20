@@ -62,3 +62,36 @@ void pre_order_traverse(void (*callback)(TREE_T value))
 {
     do_pre_order_traverse(root, callback);
 }
+
+/*
+ * EXERCISE ANSWERS
+ */
+static void do_in_order_traverse(Node *current, void (*callback)(TREE_T value))
+{
+    if (current != NULL)
+    {
+        do_in_order_traverse(current->left, callback);
+        callback(current->value);
+        do_in_order_traverse(current->right, callback);
+    }
+}
+
+void in_order_traverse(void (*callback)(TREE_T value))
+{
+    do_in_order_traverse(root, callback);
+}
+
+static void do_post_order_traverse(Node *current, void (*callback)(TREE_T value))
+{
+    if (current != NULL)
+    {
+        do_post_order_traverse(current->left, callback);
+        do_post_order_traverse(current->right, callback);
+        callback(current->value);
+    }
+}
+
+void post_order_traverse(void (*callback)(TREE_T value))
+{
+    do_post_order_traverse(root, callback);
+}
