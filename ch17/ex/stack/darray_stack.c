@@ -58,3 +58,31 @@ int is_full(void)
     assert(stack_size > 0);
     return top_element == stack_size - 1;
 }
+
+/* 17.1 */
+void resize_stack(size_t new_size)
+{
+    STACK_TYPE *new_stack;
+    size_t size_diff; // difference between old and new stack sizes
+
+    if (!(size_diff = new_size - stack_size))
+        return;
+
+    // Allocate new memory
+    new_stack = (STACK_TYPE *)realloc(stack, new_size * sizeof(STACK_TYPE));
+    if (new_stack == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Update stack pointer and size
+    stack = new_stack;
+    stack_size = new_size;
+
+    // Adjust top_element if necessary
+    if (top_element >= new_size)
+    {
+        top_element = new_size - 1;
+    }
+}

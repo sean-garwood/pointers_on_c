@@ -2,7 +2,9 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define FALSE 0
 #define Q_T int // queue type

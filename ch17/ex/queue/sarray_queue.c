@@ -7,7 +7,9 @@
  *
  */
 
-#include "aqueue.h"
+#ifndef SARRAY_QUEUE_H
+#include "sarray_queue.h"
+#endif
 
 static Q_T queue[ARRAY_SIZE];
 static size_t front = 1;
