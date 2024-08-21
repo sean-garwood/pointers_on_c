@@ -13,8 +13,8 @@ void create_stack(size_t size);
 
 /* destroy the stack, free memory.  */
 /* does not apply to static array implementation. */
-void destroy_stack(int stack_id);
+void destroy_stack(void);
 
 /* 17.1 */
-void resize_stack(size_t new_size, int stack_id);
+void resize_stack(size_t new_size);
 #endif // _DARRAY_STACK_H

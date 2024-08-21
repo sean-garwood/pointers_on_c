@@ -1,4 +1,4 @@
-# pointers_on_c
+# Pointers on C
 Problem sets from "Pointers on C" by Kenneth A. Reek
 
 ## todo
@@ -10,6 +10,7 @@ See [todo/](./todo/) for more details.
 ### Skipped
 
 8.6-8.8: Instructiuons are stupid long and kind of nonsensical.
+17.6, 17.8: Who uses arrayed BSTs?
 
 ### Needs improvement
 
