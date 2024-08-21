@@ -9,6 +9,8 @@
 #include "tree.h"
 #endif
 
+#include <string.h>
+
 #define dummies {3, 2, 4, 1, 5, -1, 0, 6, 7, 8}
 #define dummy_count 10
 
@@ -22,3 +24,9 @@ void destroy_node(TREE_T value);
 /* destroy a tree */
 void destroy_tree(void);
 #endif // LINK_TREE_H
+
+/* returns the number of children a node has */
+int number_of_children(Node *node);
+
+/* delete a node with the given value and replace its children */
+void delete_node(TREE_T value);

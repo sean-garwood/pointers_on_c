@@ -19,6 +19,10 @@ int main(void)
     // test the is_bst function
     assert(is_bst(in_order_traverse));
 
+    // test the delete_node function
+    delete_node(5);
+    assert((find(4))->right->value == 6);
+    assert(find(5) == NULL);
     // test the destroy_tree function
     destroy_tree();
     assert(init_root_value != root->value);
@@ -177,4 +181,51 @@ void destroy_tree(void)
 {
     // traverse tree and free nodes
     post_order_traverse(destroy_node);
+}
+
+/*
+ * 17.10 ANSWER
+ *
+ * Write a function that deletes a value from the tree. If the value is not in
+ * the tree, the function should abort the program.
+ *
+ */
+
+// helper for delete_node
+int number_of_children(Node *node)
+{
+    int children = 0;
+    if (node->left != NULL)
+        children++;
+    if (node->right != NULL)
+        children++;
+    return children;
+}
+
+void delete_node(TREE_T value)
+{
+    Node *to_delete, *successor;
+    assert((to_delete = find(value)) != NULL);
+
+    switch (number_of_children(to_delete))
+    {
+    case 0:
+        destroy_node(value);
+        break;
+    case 1:
+        if (to_delete->left != NULL)
+            memcpy(to_delete, to_delete->left, sizeof(Node));
+        else
+            memcpy(to_delete, to_delete->right, sizeof(Node));
+        break;
+    case 2:
+        // find the in-order successor
+        successor = to_delete->right;
+        while (successor->left != NULL)
+            memcpy(successor, successor->left, sizeof(Node));
+        // replace the node with the successor
+        memcpy(to_delete, successor, sizeof(Node));
+        destroy_node(successor->value);
+        break;
+    }
 }
