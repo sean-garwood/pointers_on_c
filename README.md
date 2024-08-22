@@ -20,3 +20,8 @@ See [todo/](./todo/) for more details.
        * write generic traversal function to pass with trx
        * no need for inv struct--just need to init part zero
        * check on the PartData struct--it's a bit weird with the union
+
+17.10: Deleting a node with current interface is messy.
+       * need parent node
+       * handle root deletion
+       * new BST struct with pointer to root node?
